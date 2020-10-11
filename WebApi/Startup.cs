@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccess;
+using Business.Abstract;
+using Business.Concrete;
+using WebApi.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Core.DataAccess;
+using Entities;
 
 namespace WebApi
 {
@@ -27,9 +24,15 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ILogService, LogManager>();
+            services.AddDbContext<LogContext>(opt =>
+               opt.UseSqlServer("DefaultConnection"));
+
             services.AddControllers();
-            services.AddDbContext<LogContext>(options =>
-                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //Cors Enabled
+            services.AddCors(option => option.AddPolicy("MyLogPolicy", builder => {
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +53,7 @@ namespace WebApi
             {
                 endpoints.MapControllers();
             });
+            app.UseCors("MyLogPolicy");
         }
     }
 }
