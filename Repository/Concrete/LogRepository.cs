@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using WebApi.DataAccess;
+using System.Collections.Generic;
 
 namespace Core.DataAccess
 {
-	public class LogRepository<T> : BaseRepository<T> where T : class
+	public class LogRepository : BaseRepository<Log>
 	{
-		protected WebApi.DataAccess.LogContext _context;
-		private DbSet<T> _dbSet;
-		public LogRepository(WebApi.DataAccess.LogContext context)
+		protected LogContext _context;
+		public LogRepository(LogContext context)
 		{
 			_context = context;
 		}
@@ -20,19 +20,20 @@ namespace Core.DataAccess
         {
         }
 
-        public void GetAll(T entity)
+        public List<Log> GetAll(Log entity)
 		{
-			_dbSet.ToList();
+				return _context.Logs.ToList();
 		}
-		public void Add(T entity)
+		public void Add(Log entity)
 		{
-			_dbSet.Add(entity);
+			_context.Add(entity);
 		}
-		public void Delete(T entity)
+		public void Delete(int logId)
 		{
-			_dbSet.Remove(entity);
+			Log log = _context.Logs.Find(logId);
+			_context.Remove(log);
 		}
-		public void Save(T entity)
+		public void Save()
 		{
 			_context.SaveChanges();
 		}

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Entities;
 using WebApi.DataAccess;
 using Business.Abstract;
+using Business.Concrete;
 
 namespace WebApi.Controllers
 {
@@ -16,22 +17,22 @@ namespace WebApi.Controllers
     public class LogController : ControllerBase
     {
         private ILogService _logService;
-        public LogContext log;
+        public Log log;
 
         public LogController(ILogService logService)
         {
             _logService = logService;
         }
         [HttpGet(template: "getAll")]
-        public IActionResult GetList()
+        public IQueryable<Log> GetAll()
         {
-            return Ok(_logService.GetAll());
+            return _logService.GetAll();
         }
         [HttpPost]
         public void Post([FromBody] string value)
         {
             _logService.Add(log);
-            _logService.Save(log);
+            _logService.Save();
         }
 
     }
