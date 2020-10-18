@@ -25,8 +25,9 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILogService, LogManager>();
-            services.AddDbContext<LogContext>(opt =>
-               opt.UseSqlServer("DefaultConnection"));
+            services.AddSingleton<BaseRepository<Log>,LogRepository>();
+            //services.AddDbContext<LogContext>(opt =>
+            //   opt.UseSqlServer("DefaultConnection"));
 
             services.AddControllers();
             //Cors Enabled

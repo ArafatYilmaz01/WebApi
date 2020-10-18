@@ -3,6 +3,7 @@ using Core.DataAccess;
 using Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WebApi.DataAccess;
 
 namespace Business.Concrete
@@ -10,27 +11,34 @@ namespace Business.Concrete
     public class LogManager : ILogService
 
     {
-        private LogRepository<LogContext> _logRepository= new LogRepository<LogContext>();
+        private BaseRepository<Log> _logRepository;
         
-        
+        public LogManager(BaseRepository<Log> logRepository)
+        {
+            _logRepository = logRepository;
+        }
 
-        public void Add(LogContext log)
+        public void Add(Log log)
         {
             _logRepository.Add(log);
         }
 
-        public void Delete(int log)
+        public void Delete(int logId)
         {
-           
-            _logRepository.Delete(log);
+           if(logId > 0)
+            {
+                _logRepository.Delete(logId);
+            }
+
+            throw new Exception("Id cannot be less than 1 ");
         }
 
-        public List<LogContext> GetAll()
+        public IQueryable<Log> GetAll()
         {
-            return (List<LogContext>)_logRepository.GetAll();
+            return _logRepository.GetAll();
         }
 
-        public void Save(LogContext log)
+        public void Save()
         {
             _logRepository.Save();
         }
